@@ -1,3 +1,4 @@
+import NavigationUtil from '../../navigator/NavigationUtil';
 import {getBoarding} from '../../util/BoardingUtil';
 import Constants from './Constants';
 /**
@@ -69,8 +70,10 @@ function handleData(doAction: Promise<any>) {
           throw new Error(result);
         }
         const {code, msg, data: {list = undefined} = {}} = result;
+        
         if (code === 401) {
           //todo 跳转到登录页
+          NavigationUtil.login();
           return;
         }
         resolve(list || result);
