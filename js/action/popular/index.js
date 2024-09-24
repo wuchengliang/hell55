@@ -1,6 +1,6 @@
 import Types from '../types';
 import DataStore, {FLAG_STORAGE} from '../../expand/dao/DataStore';
-// import {_projectModels, handleData} from '../ActionUtil';
+import {_projectModels, handleData} from '../ActionUtil';
 
 /**
  * 获取最热数据的异步action
@@ -106,7 +106,13 @@ export function onRefreshPopular(storeName, url, pageSize, favoriteDao) {
     dataStore
       .fetchData(url) //异步action与数据流
       .then(data => {
-        handleData(dispatch, storeName, data, pageSize);
+        handleData(
+          Types.POPULAR_REFRESH_SUCCESS,
+          dispatch,
+          storeName,
+          data,
+          pageSize,
+        );
       })
       .catch(error => {
         console.log(error);
@@ -164,27 +170,4 @@ export function onLoadMorePopular(
       }
     }, 500);
   };
-}
-/**
- * 处理下拉刷新的数据
- * @param dispatch
- * @param storeName
- * @param data
- * @param pageSize
- */
-function handleData(dispatch, storeName, data, pageSize) {
-  let fixItems = [];
-  if (data && data.data && data.data.items) {
-    fixItems = data.data.items;
-  } else {
-    fixItems = data;
-  }
-  dispatch({
-    type: Types.POPULAR_REFRESH_SUCCESS,
-    items: fixItems,
-    projectModes:
-      pageSize > fixItems.length ? fixItems : fixItems.slice(0, pageSize), //第一次要加载的数据
-    storeName,
-    pageIndex: 1,
-  });
 }

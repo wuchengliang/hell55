@@ -19,16 +19,36 @@ import Toast from 'react-native-easy-toast';
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars';
 const THEME_COLOR = 'red';
-export default class Index extends Component {
+class PopularPage extends Component {
+  _tabNav() {
+    const {theme} = this.props;
+    //注意：主题发生变化需要重新渲染top tab
+    if (theme !== this.theme || !this.tabNav) {
+      //优化效率：根据需要选择是否重新创建建TabNavigator，通常tab改变后才重新创建
+      this.theme = theme;
+      this.tabNav = tabNav({
+        Component: PopularTabPage,
+        keys,
+        theme,
+      });
+    }
+    return this.tabNav;
+  }
   render() {
-    let navigationbar = <NavigationBar title={'最热'} />;
-    const TabNavigator = keys.length
-      ? tabNav({
-          Component: PopularTabPage,
-          theme: {themeColor: '#2196f3'},
-          keys,
-        })
-      : null;
+    const themeColor = this.props.theme.themeColor || this.props.theme;
+  //  const themeColor = '#2196f3'
+    let statusBar = {
+      backgroundColor: themeColor,
+      barStyle: 'light-content',
+    };
+    let navigationbar = (
+      <NavigationBar
+        title={'最热'}
+        statusBar={statusBar}
+        style={{backgroundColor: themeColor}}
+      />
+    );
+    const TabNavigator = keys.length ? this._tabNav() : null;
 
     return (
       <View style={styles.container}>
@@ -38,6 +58,11 @@ export default class Index extends Component {
     );
   }
 }
+const mapPopularStateToProps = (state) => ({
+  theme: state.theme.theme,
+});
+//注意：connect只是个function，并不应定非要放在export后面
+export default connect(mapPopularStateToProps, null,)(PopularPage);
 const pageSize = 10; //设为常量，防止修改
 class PopularTab extends Component {
   constructor(props) {

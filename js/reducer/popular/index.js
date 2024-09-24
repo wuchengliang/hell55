@@ -19,8 +19,7 @@ const defaultState = {};
  * @returns {{theme: (onAction|*|string)}}
  */
 export default function onAction(state = defaultState, action) {
-  console.log('--defaultState--', state);
-  console.log('action--', action);
+
   switch (action.type) {
     case Types.POPULAR_REFRESH_SUCCESS: //下拉刷新成功
       return {

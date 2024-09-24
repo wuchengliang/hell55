@@ -13,7 +13,7 @@ import search from './search';
 const index = combineReducers({
   theme: theme,
   popular: popular,
-  //   trending: trending,
+  trending: trending,
   //   favorite: favorite,
   //    language: language,
   //   search: search,
