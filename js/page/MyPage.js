@@ -12,7 +12,7 @@ class MyPage extends Component {
         <Button
           title="改变主题"
           onPress={() => {
-            onThemeChange('yellow')
+            onThemeChange({themeColor: 'yellow'});
           }}></Button>
       </View>
     );
