@@ -15,10 +15,15 @@ import TrendingItem from '../common/TrendingItem';
 import Toast from 'react-native-easy-toast';
 import NavigationBar from 'react-native-navbar-plus';
 import keys from '../res/data/langs.json';
-
+// import EventBus from 'react-native-event-bus';
+// import EventTypes from '../util/EventTypes';
 const URL = 'https://github.com/trending/';
 const QUERY_STR = '&sort=stars';
 const THEME_COLOR = '#678';
+import FavoriteUtil from '../util/FavoriteUtil';
+import {FLAG_STORAGE} from '../expand/dao/DataStore';
+import FavoriteDao from '../expand/dao/FavoriteDao';
+const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_trending);
 
 class TrendingPage extends Component {
   _tabNav() {
@@ -37,17 +42,16 @@ class TrendingPage extends Component {
   }
 
   render() {
-    const themeColor = this.props.theme.themeColor || this.props.theme;
-    // const themeColor = '#439588'
+    const {theme} = this.props;
     let statusBar = {
-      backgroundColor: themeColor,
+      backgroundColor: theme.themeColor,
       barStyle: 'light-content',
     };
     let navigationBar = (
       <NavigationBar
         title={'趋势'}
         statusBar={statusBar}
-        style={{backgroundColor: themeColor}}
+        style={{backgroundColor: theme.themeColor}}
       />
     );
     const TabNavigator = keys.length ? this._tabNav() : null;
@@ -71,14 +75,34 @@ class TrendingTab extends Component {
     super(props);
     const {tabLabel} = this.props;
     this.storeName = tabLabel;
+    this.isFavoriteChanged = false;
   }
 
   componentDidMount() {
     this.loadData();
+    // EventBus.getInstance().addListener(
+    //   EventTypes.favoriteChanged_trending,
+    //   (this.favoriteChangeListener = () => {
+    //     this.isFavoriteChanged = true;
+    //   }),
+    // );
+    // EventBus.getInstance().addListener(
+    //   EventTypes.bottom_tab_select,
+    //   (this.bottomTabSelectListener = data => {
+    //     if (data.to === 1 && this.isFavoriteChanged) {
+    //       this.loadData(null, true);
+    //     }
+    //   }),
+    // );
+  }
+  componentWillUnmount() {
+    // EventBus.getInstance().removeListener(this.favoriteChangeListener);
+    // EventBus.getInstance().removeListener(this.bottomTabSelectListener);
   }
 
-  loadData(loadMore) {
-    const {onRefreshTrending, onLoadMoreTrending} = this.props;
+  loadData(loadMore, refreshFavorite) {
+    const {onRefreshTrending, onLoadMoreTrending, onFlushTrendingFavorite} =
+      this.props;
     const store = this._store();
     const url = this.genFetchUrl(this.storeName);
     if (loadMore) {
@@ -87,12 +111,22 @@ class TrendingTab extends Component {
         ++store.pageIndex,
         pageSize,
         store.items,
+        favoriteDao,
         callback => {
           this.refs.toast.show('没有更多了');
         },
       );
+    } else if (refreshFavorite) {
+      onFlushTrendingFavorite(
+        this.storeName,
+        store.pageIndex,
+        pageSize,
+        store.items,
+        favoriteDao,
+      );
+      this.isFavoriteChanged = false;
     } else {
-      onRefreshTrending(this.storeName, url, pageSize);
+      onRefreshTrending(this.storeName, url, pageSize, favoriteDao);
     }
   }
 
@@ -108,7 +142,7 @@ class TrendingTab extends Component {
       store = {
         items: [],
         isLoading: false,
-        projectModes: [], //要显示的数据
+        projectModels: [], //要显示的数据
         hideLoadingMore: true, //默认隐藏加载更多
       };
     }
@@ -123,15 +157,25 @@ class TrendingTab extends Component {
     const item = data.item;
     return (
       <TrendingItem
-        item={item}
-        onSelect={() => {
+        projectModel={item}
+        onSelect={callback => {
           NavigationUtil.goPage(
             {
               projectModel: item,
+              flag: FLAG_STORAGE.flag_trending,
+              callback,
             },
             'DetailPage',
           );
         }}
+        onFavorite={(item, isFavorite) =>
+          FavoriteUtil.onFavorite(
+            favoriteDao,
+            item,
+            isFavorite,
+            FLAG_STORAGE.flag_trending,
+          )
+        }
       />
     );
   }
@@ -143,18 +187,16 @@ class TrendingTab extends Component {
         <Text>正在加载更多</Text>
       </View>
     );
-    // return null;
   }
 
   render() {
     let store = this._store();
-    console.log('projectModes11', store.projectModes);
     return (
       <View style={styles.container}>
         <FlatList
-          data={store.projectModes}
+          data={store.projectModels}
           renderItem={data => this.renderItem(data)}
-          keyExtractor={item => '' + item.id}
+          keyExtractor={item => '' + item.item.fullName}
           refreshControl={
             <RefreshControl
               title={'Loading'}
@@ -193,16 +235,40 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => ({
   //将 dispatch(onRefreshPopular(storeName, url))绑定到props
-  onRefreshTrending: (storeName, url, pageSize) =>
-    dispatch(actions.onRefreshTrending(storeName, url, pageSize)),
-  onLoadMoreTrending: (storeName, pageIndex, pageSize, items, callBack) =>
+  onRefreshTrending: (storeName, url, pageSize, favoriteDao) =>
+    dispatch(actions.onRefreshTrending(storeName, url, pageSize, favoriteDao)),
+  onLoadMoreTrending: (
+    storeName,
+    pageIndex,
+    pageSize,
+    items,
+    favoriteDao,
+    callBack,
+  ) =>
     dispatch(
       actions.onLoadMoreTrending(
         storeName,
         pageIndex,
         pageSize,
         items,
+        favoriteDao,
         callBack,
+      ),
+    ),
+  onFlushTrendingFavorite: (
+    storeName,
+    pageIndex,
+    pageSize,
+    items,
+    favoriteDao,
+  ) =>
+    dispatch(
+      actions.onFlushTrendingFavorite(
+        storeName,
+        pageIndex,
+        pageSize,
+        items,
+        favoriteDao,
       ),
     ),
 });
