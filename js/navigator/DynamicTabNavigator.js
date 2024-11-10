@@ -11,8 +11,8 @@ import MyPage from '../page/MyPage';
 import PopularPage from '../page/PopularPage';
 import TrendingPage from '../page/TrendingPage';
 import {connect} from 'react-redux';
-// import EventTypes from '../util/EventTypes';
-// import EventBus from 'react-native-event-bus';
+import EventTypes from '../util/EventTypes';
+import EventBus from 'react-native-event-bus';
 
 const Tab = createBottomTabNavigator();
 
@@ -72,6 +72,7 @@ class DynamicTabNavigator extends Component {
       fromIndex = this.toNavIndex;
     } else {
       let key = history[history.length - 2].key;
+      
       for (let i = 0; i < routeNames.length; i++) {
         if (key.startsWith(routeNames[i])) {
           fromIndex = i;
@@ -79,11 +80,11 @@ class DynamicTabNavigator extends Component {
         }
       }
     }
-    // EventBus.getInstance().fireEvent(EventTypes.bottom_tab_select, {
-    //   //发送底部tab切换的事件
-    //   from: fromIndex,
-    //   to: index,
-    // });
+    EventBus.getInstance().fireEvent(EventTypes.bottom_tab_select, {
+      //发送底部tab切换的事件
+      from: fromIndex,
+      to: index,
+    });
     //记录上一次的位置
     this.toNavIndex = index;
   }

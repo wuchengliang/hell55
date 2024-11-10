@@ -19,7 +19,6 @@ const defaultState = {};
  * @returns {{theme: (onAction|*|string)}}
  */
 export default function onAction(state = defaultState, action) {
-
   switch (action.type) {
     case Types.POPULAR_REFRESH_SUCCESS: //下拉刷新成功
       return {
@@ -68,6 +67,14 @@ export default function onAction(state = defaultState, action) {
           ...state[action.storeName],
           hideLoadingMore: true,
           pageIndex: action.pageIndex,
+        },
+      };
+    case Types.FLUSH_POPULAR_FAVORITE: //刷新收藏状态
+      return {
+        ...state,
+        [action.storeName]: {
+          ...state[action.storeName],
+          projectModels: action.projectModels,
         },
       };
     default:

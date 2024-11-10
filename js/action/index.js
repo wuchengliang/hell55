@@ -10,7 +10,7 @@ import {
   onFlushTrendingFavorite,
 } from './trending';
 // import { onSearch, onLoadMoreSearch, onSearchCancel } from './search';
-// import { onLoadFavoriteData } from './favorite';
+import {onLoadFavoriteData} from './favorite';
 // import { onLoadLanguage } from './language';
 
 export default {
@@ -20,9 +20,9 @@ export default {
   onLoadMorePopular,
   onRefreshTrending,
   onLoadMoreTrending,
-  // onLoadFavoriteData,
-  // onFlushPopularFavorite,
-  // onFlushTrendingFavorite,
+  onLoadFavoriteData,
+  onFlushPopularFavorite,
+  onFlushTrendingFavorite,
   // onLoadLanguage,
   // onShowCustomThemeView,
   // onSearch,

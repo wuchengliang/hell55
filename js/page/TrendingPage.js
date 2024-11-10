@@ -15,8 +15,8 @@ import TrendingItem from '../common/TrendingItem';
 import Toast from 'react-native-easy-toast';
 import NavigationBar from 'react-native-navbar-plus';
 import keys from '../res/data/langs.json';
-// import EventBus from 'react-native-event-bus';
-// import EventTypes from '../util/EventTypes';
+import EventBus from 'react-native-event-bus';
+import EventTypes from '../util/EventTypes';
 const URL = 'https://github.com/trending/';
 const QUERY_STR = '&sort=stars';
 const THEME_COLOR = '#678';
@@ -80,24 +80,24 @@ class TrendingTab extends Component {
 
   componentDidMount() {
     this.loadData();
-    // EventBus.getInstance().addListener(
-    //   EventTypes.favoriteChanged_trending,
-    //   (this.favoriteChangeListener = () => {
-    //     this.isFavoriteChanged = true;
-    //   }),
-    // );
-    // EventBus.getInstance().addListener(
-    //   EventTypes.bottom_tab_select,
-    //   (this.bottomTabSelectListener = data => {
-    //     if (data.to === 1 && this.isFavoriteChanged) {
-    //       this.loadData(null, true);
-    //     }
-    //   }),
-    // );
+    EventBus.getInstance().addListener(
+      EventTypes.favoriteChanged_trending,
+      (this.favoriteChangeListener = () => {
+        this.isFavoriteChanged = true;
+      }),
+    );
+    EventBus.getInstance().addListener(
+      EventTypes.bottom_tab_select,
+      (this.bottomTabSelectListener = data => {
+        if (data.to === 1 && this.isFavoriteChanged) {
+          this.loadData(null, true);
+        }
+      }),
+    );
   }
   componentWillUnmount() {
-    // EventBus.getInstance().removeListener(this.favoriteChangeListener);
-    // EventBus.getInstance().removeListener(this.bottomTabSelectListener);
+    EventBus.getInstance().removeListener(this.favoriteChangeListener);
+    EventBus.getInstance().removeListener(this.bottomTabSelectListener);
   }
 
   loadData(loadMore, refreshFavorite) {

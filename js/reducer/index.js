@@ -14,7 +14,7 @@ const index = combineReducers({
   theme: theme,
   popular: popular,
   trending: trending,
-  //   favorite: favorite,
+  favorite: favorite,
   //    language: language,
   //   search: search,
 });

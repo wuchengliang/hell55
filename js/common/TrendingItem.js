@@ -1,16 +1,16 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import HTMLView from 'react-native-htmlview';
 import BaseItem from './BaseItem';
+
 export default class TrendingItem extends BaseItem {
   render() {
-    const {projectModel: item} = this.props;
-    // const {item} = projectModel;
+    const {projectModel} = this.props;
+    const {item} = projectModel;
     if (!item) return null;
     let description = '<p>' + item.description + '</p>';
     return (
-      <TouchableOpacity onPress={this.props.onSelect}>
+      <TouchableOpacity onPress={() => this.onItemClick()}>
         <View style={styles.cell_container}>
           <Text style={styles.title}>{item.fullName}</Text>
           <HTMLView

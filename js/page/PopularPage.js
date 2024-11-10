@@ -18,8 +18,8 @@ import keys from '../res/data/keys.json';
 import FavoriteDao from '../expand/dao/FavoriteDao';
 import {FLAG_STORAGE} from '../expand/dao/DataStore';
 import FavoriteUtil from '../util/FavoriteUtil';
-// import EventBus from 'react-native-event-bus';
-// import EventTypes from '../util/EventTypes';
+import EventBus from 'react-native-event-bus';
+import EventTypes from '../util/EventTypes';
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars';
 const THEME_COLOR = 'red';
@@ -79,25 +79,25 @@ class PopularTab extends Component {
 
   componentDidMount() {
     this.loadData();
-    // EventBus.getInstance().addListener(
-    //   EventTypes.favorite_changed_popular,
-    //   (this.favoriteChangeListener = () => {
-    //     this.isFavoriteChanged = true;
-    //   }),
-    // );
-    // EventBus.getInstance().addListener(
-    //   EventTypes.bottom_tab_select,
-    //   (this.bottomTabSelectListener = data => {
-    //     if (data.to === 0 && this.isFavoriteChanged) {
-    //       this.loadData(null, true);
-    //     }
-    //   }),
-    // );
+    EventBus.getInstance().addListener(
+      EventTypes.favorite_changed_popular,
+      (this.favoriteChangeListener = () => {
+        this.isFavoriteChanged = true;
+      }),
+    );
+    EventBus.getInstance().addListener(
+      EventTypes.bottom_tab_select,
+      (this.bottomTabSelectListener = data => {
+        if (data.to === 0 && this.isFavoriteChanged) {
+          this.loadData(null, true);
+        }
+      }),
+    );
   }
 
   componentWillUnmount() {
-    // EventBus.getInstance().removeListener(this.favoriteChangeListener);
-    // EventBus.getInstance().removeListener(this.bottomTabSelectListener);
+    EventBus.getInstance().removeListener(this.favoriteChangeListener);
+    EventBus.getInstance().removeListener(this.bottomTabSelectListener);
   }
 
   loadData(loadMore, refreshFavorite) {
