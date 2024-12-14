@@ -10,8 +10,8 @@ import DetailPage from '../page/DetailPage';
 import SortKeyPage from '../page/SortKeyPage';
 import SearchPage from '../page/SearchPage';
 import CustomKeyPage from '../page/CustomKeyPage';
-// import AboutPage from '../page/about/AboutPage';
-// import AboutMePage from '../page/about/AboutMePage';
+import AboutPage from '../page/about/AboutPage';
+import AboutMePage from '../page/about/AboutMePage';
 import CodePushPage from '../page/CodePushPage';
 
 const Stack = createNativeStackNavigator();
@@ -51,7 +51,16 @@ export default function App() {
           component={WebViewPage}
           options={{headerShown: false}}
         />
-
+        <Stack.Screen
+          name="AboutPage"
+          component={AboutPage}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="AboutMePage"
+          component={AboutMePage}
+          options={{headerShown: false}}
+        />
         <Stack.Screen
           name="CustomKeyPage"
           component={CustomKeyPage}

@@ -2,7 +2,7 @@
   "aboutMe": {
     "Tutorial": {
       "name": "教程",
-      "icon": "ios-bookmarks",
+      "icon": "book",
       "items": [
         {
           "title": "Flutter从入门到进阶 实战携程网App",
@@ -24,7 +24,7 @@
     },
     "Blog": {
       "name": "技术博客",
-      "icon": "ios-laptop",
+      "icon": "laptop-outline",
       "items": [
         {
           "title": "个人博客",
@@ -50,7 +50,7 @@
     },
     "Contact": {
       "name": "联系方式",
-      "icon": "ios-contacts",
+      "icon": "people-circle-outline",
       "items": {
         "QQ": {
           "title": "QQ",
@@ -64,7 +64,7 @@
     },
     "QQ": {
       "name": "技术交流群",
-      "icon": "ios-chatbubbles",
+      "icon": "chatbubbles",
       "items": [
         {
           "title": "移动开发者技术分享群",
